@@ -18,6 +18,9 @@ bool new_right = false;
 
 char progmemString[] = "";
 
+unsigned char GameMode = GAME_MODE_GLOVE;
+int GameSaveOffset = GAME_GLOVE_OFFSET;
+
 void tautInput()
 {
 	new_a = true;
@@ -63,6 +66,21 @@ char* eps(char* str)
     return progmemString;
 }
 
+char* spsn(int addr, unsigned char len)
+{
+	int offset;
+	
+	progmemString[0] = '\0';
+	
+	for(offset = 0; offset < len; offset++)
+	{
+		progmemString[offset] = EEPROM.read(addr+offset);	
+	}
+	progmemString[offset] = '\0';
+	
+    return progmemString;
+}
+
 
 void printTime(unsigned short time)
 {
@@ -75,4 +93,11 @@ void printTime(unsigned short time)
 	if(secs < 10) arduboy.print('0');
 	arduboy.print(secs);
 		
+}
+
+short EEPROMReadShort(int addr)
+{
+	byte hi = EEPROM.read(addr+FILE_SCORE);
+	byte lo = EEPROM.read(addr+FILE_SCORE+1);
+	return (hi << 8) | lo;
 }

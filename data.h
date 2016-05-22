@@ -12,6 +12,10 @@
 
 const char gameTitle[] PROGMEM    = "GLOVE\0         "; // max 10 (field 16)
 const char gameSubTitle[] PROGMEM = "\0              "; // max 20 (field 21)
+const char gameRandom[] PROGMEM   = "random mode";
+
+const char titleNormal[] PROGMEM = "Glove";
+const char titleRandom[] PROGMEM = "Random";
 
 const unsigned char sprites[] PROGMEM = {
     

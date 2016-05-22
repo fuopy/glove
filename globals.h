@@ -69,6 +69,16 @@ extern Arduboy arduboy;
 #define GAME_NOTHING 0
 #define GAME_REBOOT 1
 
+#define GAME_SAVE_FILE 6 // Save file for use with the game
+#define GAME_GLOVE_OFFSET (GAME_SAVE_FILE * 10 * 5)
+#define GAME_RANDOM_OFFSET (GAME_SAVE_FILE * 10 * 6)
+
+#define GAME_MODE_GLOVE 0
+#define GAME_MODE_RANDOM 1
+
+extern int GameSaveOffset;
+extern unsigned char GameMode;
+
 extern bool new_a, new_b, new_up, new_left, new_down, new_right;
 extern bool old_a, old_b, old_up, old_down, old_left, old_right;
 
@@ -84,6 +94,8 @@ extern char progmemString[52];
 char* rps(const char* const* str);
 char* dps(const char* str);
 char* eps(char* str);
+char* spsn(int addr, unsigned char len);
+short EEPROMReadShort(int addr);
 
 void printTime(unsigned short time);
 

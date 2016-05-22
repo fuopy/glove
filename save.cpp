@@ -5,6 +5,13 @@
 
 bool validSave;
 
+byte readAdvance(int &address)
+{
+	byte val = EEPROM.read(address);
+	address++;
+	return val;
+}
+
 void saveSetup()
 {
     validSave = checkFileValidity(GAME_SAVE_FILE);
@@ -20,7 +27,22 @@ void saveCreate()
 
 bool checkFileValidity(byte file)
 {
-	int address = file * 10 * 5;
+	int address = GameSaveOffset + FILE_VALID;
+	
+	/*
+	char* checkStr = "LoMeM";
+	unsigned char checkIndex;
+	
+	for(checkIndex = 0; checkIndex <= 5; ++checkIndex)
+	{
+		if(readAdvance(address) != checkStr[checkIndex])
+			return false;
+	}
+	
+	return true;
+	*/
+	
+	
 	if((EEPROM.read(address+FILE_VALID) == 'L')
 		&& (EEPROM.read(address+FILE_VALID+1) == 'o')
 		&& (EEPROM.read(address+FILE_VALID+2) == 'M')
@@ -30,12 +52,13 @@ bool checkFileValidity(byte file)
 		return true;
 	}
 	return false;
+	
 }
 
 
 void breakSave(byte file)
 {
-	int address = file * 10 * 5;
+	int address = GameSaveOffset;
 	
 	// Write game identity
 	EEPROM.write(address+FILE_VALID, 'L');
@@ -47,7 +70,8 @@ void breakSave(byte file)
 
 void initializeSave(byte file)
 {
-	int address = file * 10 * 5;
+	int address = GameSaveOffset;
+	int offset;
 	
 	// Write game identity
 	EEPROM.write(address+FILE_VALID, 'L');
@@ -56,35 +80,14 @@ void initializeSave(byte file)
 	EEPROM.write(address+FILE_VALID+3, 'e');
 	EEPROM.write(address+FILE_VALID+4, 'M');
 	
-	// Blank out Room Visited Completion
-	EEPROM.write(address+FILE_COMPLETION, 0);
-	EEPROM.write(address+FILE_COMPLETION+1, 0);
-	EEPROM.write(address+FILE_COMPLETION+2, 0);
-	EEPROM.write(address+FILE_COMPLETION+3, 0);
-	EEPROM.write(address+FILE_COMPLETION+4, 0);
-	
-	// Blank out Continue File
-	EEPROM.write(10+address+FILE_SCORE, 0);
-	EEPROM.write(10+address+FILE_SCORE+1, 0);
-	EEPROM.write(10+address+FILE_TIME, 0);
-	EEPROM.write(10+address+FILE_TIME+1, 0);
-	EEPROM.write(10+address+FILE_LEVEL, 0);
-	EEPROM.write(10+address+FILE_CURRENT_LEVEL, 0);
-	EEPROM.write(10+address+FILE_HEALTH, 0);
-	EEPROM.write(10+address+FILE_HEALTH+1, 0);
-	EEPROM.write(10+address+FILE_CONTINUE, 0);
+	// Blank out Room Visited Completion and continue file
+	for(offset = 0; offset < 14; ++offset) {
+		EEPROM.write(address+FILE_COMPLETION+offset, 0);
+	}
 	
 	// Blank out High Score files
-	for(char player = 0; player < 30; player += 10) {
-		EEPROM.write(20+address+player+FILE_SCORE, 0);
-		EEPROM.write(20+address+player+FILE_SCORE+1, 0);
-		EEPROM.write(20+address+player+FILE_TIME, 0);
-		EEPROM.write(20+address+player+FILE_TIME+1, 0);
-		EEPROM.write(20+address+player+FILE_LEVEL, 0);
-		EEPROM.write(20+address+player+FILE_NAME, 0);
-		EEPROM.write(20+address+player+FILE_NAME+1, 0);
-		EEPROM.write(20+address+player+FILE_NAME+2, 0);
-		EEPROM.write(20+address+player+FILE_NAME+3, 0);
+	for(char player = 0; player < 30; player += 1) {
+		EEPROM.write(20+address+player, 0);
 	}
 }
 
@@ -92,7 +95,7 @@ void initializeSave(byte file)
 int getRoomClearPercentage()
 {
 	char i;
-	int address = GAME_SAVE_FILE * 10 * 5;
+	int address = GameSaveOffset;
 	char block;
 	char completed = 0;
 	
@@ -111,7 +114,7 @@ int getRoomClearPercentage()
 
 bool saveHighScore()
 {
-	int address = GAME_SAVE_FILE * 10 * 5;
+	int address = GameSaveOffset;
 	
 	char myScoreIndex;
 	short compareScore;
@@ -196,7 +199,7 @@ bool saveHighScore()
 void markRoomAsCleared(unsigned char room)
 {
 	if(room > numLevels) return;
-	int address = GAME_SAVE_FILE * 10 * 5;
+	int address = GameSaveOffset;
 	int pos = address+FILE_COMPLETION+(room/8);
 	char data = EEPROM.read(pos);
 	data |= 1 << (room%8);
@@ -205,7 +208,7 @@ void markRoomAsCleared(unsigned char room)
 
 short getCurrentLevelProgress()
 {
-	int address = GAME_SAVE_FILE * 10 * 5;
+	int address = GameSaveOffset;
 	return EEPROM.read(10+address+FILE_LEVEL);
 }
 
@@ -214,7 +217,7 @@ void displayLoadGame(byte file)
 	unsigned char level = currentLevel;
 	rollingScore = -30;
 	quitGame = false;
-	int address = file * 10 * 5;
+	int address = GameSaveOffset;
 
 	if(EEPROM.read(10+address+FILE_CONTINUE) == 1) {
 		gameSetup();
@@ -246,20 +249,28 @@ void displayLoadGame(byte file)
 
 void saveGame(byte file)
 {
-	int address = file * 10 * 5;
-	EEPROM.write(10+address+FILE_SCORE, ((score >> 8) & 0xFF));
-	EEPROM.write(10+address+FILE_SCORE+1, (score & 0xFF));
-	EEPROM.write(10+address+FILE_HEALTH, ((p1.health >> 8) & 0xFF));
-	EEPROM.write(10+address+FILE_HEALTH+1, (p1.health & 0xFF));
-	EEPROM.write(10+address+FILE_TIME, ((gameTime >> 8) & 0xFF));
-	EEPROM.write(10+address+FILE_TIME+1, (gameTime & 0xFF));
-	EEPROM.write(10+address+FILE_LEVEL, levelsCompleted);
-	EEPROM.write(10+address+FILE_CURRENT_LEVEL, currentLevel);
-	EEPROM.write(10+address+FILE_CONTINUE, 1);
+	int address = GameSaveOffset + 10;
+	EEPROM.write(address+FILE_SCORE, ((score >> 8) & 0xFF));
+	EEPROM.write(address+FILE_SCORE+1, (score & 0xFF));
+	EEPROM.write(address+FILE_HEALTH, ((p1.health >> 8) & 0xFF));
+	EEPROM.write(address+FILE_HEALTH+1, (p1.health & 0xFF));
+	EEPROM.write(address+FILE_TIME, ((gameTime >> 8) & 0xFF));
+	EEPROM.write(address+FILE_TIME+1, (gameTime & 0xFF));
+	EEPROM.write(address+FILE_LEVEL, levelsCompleted);
+	EEPROM.write(address+FILE_CURRENT_LEVEL, currentLevel);
+	EEPROM.write(address+FILE_CONTINUE, 1);
 }
 
 void deleteContinueSave()
 {
-	int address = GAME_SAVE_FILE * 10 * 5;
-	EEPROM.write(10+address+FILE_CONTINUE, 0);
+	EEPROM.write(GameSaveOffset + 10 + FILE_CONTINUE, 0);
+}
+
+void clearAllRooms()
+{
+	short roomID;
+	
+	for(roomID = 0; roomID < numLevels; roomID++) {
+		markRoomAsCleared(roomID);
+	}
 }

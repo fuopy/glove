@@ -26,8 +26,14 @@ void activate_exit(Exit& obj)
 	levelsCompleted++;
 	if(!quitGame)
 	{
-		// Mark this room as cleared in save file
-		markRoomAsCleared(currentLevel);
-		gameGotoLevel(obj.dest);
+		// If playing RANDOM mode
+		if(GameMode == GAME_MODE_RANDOM){
+			gameGotoLevel(random(0,numLevels-1));
+		// In any other mode
+		} else {			
+			// Mark this room as cleared in save file
+			markRoomAsCleared(currentLevel);
+			gameGotoLevel(obj.dest);
+		}
 	}
 }

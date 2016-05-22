@@ -260,7 +260,10 @@ void displayGame()
 	gameTimeTick = 0;
 	
 	// Go to first level
-	gameGotoLevel(255);
+	if(GameMode == GAME_MODE_RANDOM)
+		gameGotoLevel(random(0,numLevels-1));
+	else
+		gameGotoLevel(255);
 	
 	// Enter game loop
 	gameLoop();

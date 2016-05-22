@@ -5,19 +5,21 @@
 // The Strings used for the Options Menu
 const char optionsMenuItems_0[] PROGMEM = "[   Options Menu    ]";
 const char optionsMenuItems_1[] PROGMEM = "Sound:";
-const char optionsMenuItems_2[] PROGMEM = "Reset Game Data";
+const char optionsMenuItems_2[] PROGMEM = "Play";
+const char optionsMenuItems_3[] PROGMEM = "Reset Game Data";
 
 const char* const optionsMenuItems[] PROGMEM = {
     optionsMenuItems_0,
     optionsMenuItems_1,
-    optionsMenuItems_2
+    optionsMenuItems_2,
+    optionsMenuItems_3
 };
 
-const char clearSaveConfirmItems_0[] PROGMEM = "[REALLY CLEAR SAVE? ]";
+const char clearSaveConfirmItems_0[] PROGMEM = "[REALLY CLEAR SAVE??]";
 const char clearSaveConfirmItems_1[] PROGMEM = "No, whoops!";
 const char clearSaveConfirmItems_2[] PROGMEM = "Yes, I'm sure.";
 
-const char optionsMenuItemsCount = 2;
+const char optionsMenuItemsCount = 3;
 
 const char* const clearSaveMenuItems[] PROGMEM = {
 	clearSaveConfirmItems_0,
@@ -30,6 +32,7 @@ const char clearSaveMenuItemsCount = 2;
 unsigned char displayOptionsMenu()
 {
     unsigned char choice;
+	bool unlockedRandom = getRoomClearPercentage() >= 100;
     
     // Repeat while a choice has not been made
     while(choice != 255) {
@@ -42,28 +45,50 @@ unsigned char displayOptionsMenu()
 		// Draw whether sound is disabled
 		arduboy.setCursor(6*7 + 2, 8);
 		if (audioEnabled) {
-			arduboy.print("On");
+			arduboy.print(F("On"));
 		} else {
-			arduboy.print("Off");
+			arduboy.print(F("Off"));
+		}
+		
+		// Draw Game Mode selection
+		arduboy.setCursor(6*6 + 2, 16);
+		if(GameMode == GAME_MODE_RANDOM) {
+			arduboy.print(F("Glove"));
+		} else if(unlockedRandom) {
+			arduboy.print(F("Random"));
+		} else {
+			arduboy.print(F("??????"));
 		}
         choice = prompt_start(optionsMenuItems, optionsMenuItemsCount);
         
         // Choice: Toggle Sound
+		
         if(choice == 0) {
 			if(audioEnabled) {
 				arduboy.audio.off();
-				arduboy.audio.saveOnOff();
-			}
-			else
-			{
+			} else {
 				arduboy.audio.on();
-				arduboy.audio.saveOnOff();
 			}
+			arduboy.audio.saveOnOff();
             return SETTING_CHANGED;
         }
+		
+		// Choice: Change Mode
+		else if(choice == 1) {
+			if(GameMode == GAME_MODE_RANDOM) {
+				GameSaveOffset = GAME_GLOVE_OFFSET;
+				GameMode = GAME_MODE_GLOVE;
+				return SETTING_REBOOT;
+			} else if(unlockedRandom) {
+				GameSaveOffset = GAME_RANDOM_OFFSET;
+				GameMode = GAME_MODE_RANDOM;
+				return SETTING_REBOOT;
+			}
+			continue;
+		}
         
         // Choice: Clear Data
-        else if(choice == 1) {
+        else if(choice == 2) {
 			
 			// If it's time to reboot, reboot!
 			if(displayClearMenu() == SETTING_REBOOT)

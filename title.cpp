@@ -19,12 +19,20 @@ void drawTitleAndSubtitle()
 	
 	// Display game subtitle, small and centered
 	arduboy.setTextSize(1);
-	arduboy.setCursor(64 - subTitleLen*3, 30);
-    arduboy.print(eps((char *)gameSubTitle));
+	if(GameMode == GAME_MODE_RANDOM) {
+		arduboy.setCursor(64 - 11*3, 30);
+		arduboy.print(eps((char *)gameRandom));
+	} else {
+		arduboy.setCursor(64 - subTitleLen*3, 30);
+		arduboy.print(eps((char *)gameSubTitle));
+	}
 }
 
 void displayTitle()
 {
+	unsigned char upPressCount = 0;
+	unsigned int randomCount;
+	
 	// Ticks until white pixels draw
 	short whitePixelDelay = WHITE_PIXEL_WAIT_TIME;
 	
@@ -38,7 +46,7 @@ void displayTitle()
 	int roomsCleared = getRoomClearPercentage();
 	
 	// Display room clear count if the player beat at least level 1
-	if(roomsCleared > 0)
+	if(!GameMode && roomsCleared > 0)
 	{
 		arduboy.setCursor(6, 8*6 + 4);
 		arduboy.print(F("ROOMS CLEARED: "));
@@ -59,7 +67,15 @@ void displayTitle()
 	
 	// Start blanking out the screen
 	while(true) {
+		randomCount++;
 		updateInput();
+		
+		if(UP_PRESSED){
+			upPressCount++;
+			if(upPressCount == 100) {
+				clearAllRooms();
+			}
+		}
 		
 		// Draw black pixels
 		arduboy.drawPixel(random(0,128), random(0,64), 0);
@@ -81,6 +97,9 @@ void displayTitle()
 		}
 		
 		arduboy.display();
-		if(A_PRESSED) break;
+		if(A_PRESSED) {
+			randomSeed(random()+randomCount);
+			break;
+		}
 	}
 }

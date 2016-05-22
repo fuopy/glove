@@ -43,7 +43,7 @@ const char noContinueMenuItemsCount = 3;
 unsigned char displayMainMenu()
 {
     // Read whether the save file has a game in progress
-	int address = GAME_SAVE_FILE * 10 * 5;
+	int address = GameSaveOffset;
 	unsigned char choice;
 	unsigned char result;
     

@@ -28,11 +28,6 @@ void update_explorer(Explorer& obj)
 		return;
 	}
 	
-	// Cheat for testing
-	if(UP_DOWN && DOWN_DOWN && LEFT_DOWN && RIGHT_DOWN && B_DOWN && A_PRESSED) {
-		//gameGotoLevel(0);
-	}
-	
 	// Add health from rolling health
 	if(rollingHealth > 0) {
 		rollingHealth -= 10;
@@ -185,8 +180,6 @@ void update_explorer(Explorer& obj)
 		}
 	}
 	
-	//if(A_PRESSED || B_PRESSED || (B_DOWN && autoFireTime <= 0)) {
-	
 	// Player shooting
 	if(A_PRESSED) {
 		autoFireTime = 8;
@@ -197,7 +190,6 @@ void update_explorer(Explorer& obj)
 		
 		add_bullet(obj.x+3, obj.y+3, nvx+vx, nvy+vy);
 	}
-	if(B_DOWN && (autoFireTime>0)) autoFireTime--;
 	
 	// Update Camera
 	scrollx = 64 - obj.x;

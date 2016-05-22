@@ -6,13 +6,11 @@
 
 void displayRecords()
 {
-	int address = GAME_SAVE_FILE * 10 * 5;
+	int address = GameSaveOffset;
 	
 	arduboy.clear();
-	arduboy.setCursor(0, 0);
-	arduboy.print(F("     - Records -     "));
-	arduboy.setCursor(0, 8*2);
-	arduboy.print(F("Name Score Time  #Rms"));
+	arduboy.setCursor(6*5, 0);
+	arduboy.print(F("- Records -\n\nName Score Time  #Rms"));
 	
 	byte hi;
 	byte lo;
@@ -22,20 +20,10 @@ void displayRecords()
 	
 	for(char i=0; i<3; ++i) {
 		scoreAddress = 20 + (i*10) + address;
-		
-		hi = EEPROM.read(scoreAddress+FILE_NAME);
 		arduboy.setCursor(0, 8*(3+i));
-		arduboy.print(char(hi));
-		hi = EEPROM.read(scoreAddress+FILE_NAME+1);
-		arduboy.setCursor(6*1, 8*(3+i));
-		arduboy.print(char(hi));
-		hi = EEPROM.read(scoreAddress+FILE_NAME+2);
-		arduboy.setCursor(6*2, 8*(3+i));
-		arduboy.print(char(hi));
-		hi = EEPROM.read(scoreAddress+FILE_NAME+3);
-		arduboy.setCursor(6*3, 8*(3+i));
-		arduboy.print(char(hi));
+		arduboy.print(spsn(scoreAddress+FILE_NAME, 4));
 		
+
 		hi = EEPROM.read(scoreAddress+FILE_SCORE);
 		lo = EEPROM.read(scoreAddress+FILE_SCORE+1);
 		val = (hi << 8) | lo;
@@ -51,14 +39,18 @@ void displayRecords()
 		printTime(val);
 		
 		hi = EEPROM.read(scoreAddress+FILE_LEVEL);
-		arduboy.setCursor(6*17, 8*(3+i));
+		arduboy.print(' ');
 		arduboy.print(hi);
 	}
 	arduboy.setCursor(0, 8*7);
 	
-	arduboy.print(F("ROOMS CLEARED: "));
-	arduboy.print(getRoomClearPercentage());
-	arduboy.print("%");
+	if(GameMode == GAME_MODE_GLOVE) {
+		arduboy.print(F("ROOMS CLEARED: "));
+		arduboy.print(getRoomClearPercentage());
+		arduboy.print('%');
+	} else {
+		arduboy.print(F("   YOU ARE GREAT!!"));
+	}
 	
 	arduboy.display();
 	

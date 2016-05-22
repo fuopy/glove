@@ -4,8 +4,6 @@
 #include "world.h"
 #include "globals.h"
 
-#define GAME_SAVE_FILE 6 // Save file for use with the game
-
 extern bool validSave;
 
 void saveSetup();
@@ -19,5 +17,7 @@ bool saveHighScore();
 void markRoomAsCleared(unsigned char room);
 void deleteContinueSave();
 void displayLoadGame(unsigned char file);
+void clearAllRooms();
+byte readAdvance(int &address);
 
 #endif
