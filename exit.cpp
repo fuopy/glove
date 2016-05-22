@@ -1,3 +1,4 @@
+#include "save.h"
 #include "world.h"
 
 void add_exit(char x, char y, char dest)
@@ -24,5 +25,9 @@ void activate_exit(Exit& obj)
 {
 	levelsCompleted++;
 	if(!quitGame)
+	{
+		// Mark this room as cleared in save file
+		markRoomAsCleared(currentLevel);
 		gameGotoLevel(obj.dest);
+	}
 }

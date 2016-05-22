@@ -8,8 +8,6 @@
 
 void gameGotoLevel(unsigned char level)
 {
-	// Mark this room as cleared in save file
-	markRoomAsCleared(currentLevel);
 	
 	// If the level destination is zero, increment the current level
 	if(level == 0) level = currentLevel + 1;
