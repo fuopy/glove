@@ -8,8 +8,14 @@ bool validSave;
 void saveSetup()
 {
     validSave = checkFileValidity(GAME_SAVE_FILE);
+}
+
+void saveCreate()
+{
 	if(!validSave)
 		initializeSave(GAME_SAVE_FILE);
+	
+	validSave = true;
 }
 
 bool checkFileValidity(byte file)
@@ -89,6 +95,8 @@ int getRoomClearPercentage()
 	int address = GAME_SAVE_FILE * 10 * 5;
 	char block;
 	char completed = 0;
+	
+	if(!validSave) return 0;
 	
 	for(char blockNum = 0; blockNum < 5; ++blockNum) {
 		block = EEPROM.read(address+FILE_COMPLETION+blockNum);

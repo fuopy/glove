@@ -9,6 +9,7 @@
 extern bool validSave;
 
 void saveSetup();
+void saveCreate();
 bool checkFileValidity(byte file);
 void breakSave(byte file);
 void initializeSave(byte file);

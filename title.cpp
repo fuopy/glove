@@ -3,13 +3,14 @@
 #include "data.h"
 #include "save.h"
 
-void displayTitle()
+#define WHITE_PIXEL_WAIT_TIME 20000
+#define REDRAW_TITLE_WAIT_TIME 1000
+
+void drawTitleAndSubtitle()
 {
     // Get the length of the strings
     size_t titleLen = strlen_P(gameTitle);
     size_t subTitleLen = strlen_P(gameSubTitle);
-    
-	arduboy.clear();
 	
 	// Print game title, large and centered
 	arduboy.setTextSize(2);
@@ -20,6 +21,19 @@ void displayTitle()
 	arduboy.setTextSize(1);
 	arduboy.setCursor(64 - subTitleLen*3, 30);
     arduboy.print(eps((char *)gameSubTitle));
+}
+
+void displayTitle()
+{
+	// Ticks until white pixels draw
+	short whitePixelDelay = WHITE_PIXEL_WAIT_TIME;
+	
+	// Ticks until glove logo redraw
+	short redrawTitleDelay = REDRAW_TITLE_WAIT_TIME;
+    
+	arduboy.clear();
+	
+	drawTitleAndSubtitle();
 
 	int roomsCleared = getRoomClearPercentage();
 	
@@ -46,7 +60,26 @@ void displayTitle()
 	// Start blanking out the screen
 	while(true) {
 		updateInput();
+		
+		// Draw black pixels
 		arduboy.drawPixel(random(0,128), random(0,64), 0);
+		
+		// Draw white pixels
+		if(whitePixelDelay <= 0) {
+			arduboy.drawPixel(random(0,128), random(0,64), 1);
+			redrawTitleDelay--;
+			whitePixelDelay = 10;
+			whitePixelDelay--;
+		} else {
+			whitePixelDelay--;
+		}
+		
+		// Redraw title
+		if(redrawTitleDelay <= 0) {
+			drawTitleAndSubtitle();
+			redrawTitleDelay = REDRAW_TITLE_WAIT_TIME;
+		}
+		
 		arduboy.display();
 		if(A_PRESSED) break;
 	}

@@ -31,8 +31,8 @@ void loop() {
 	// If the game is freshly installed, jump right in
 	if(!validSave)
 	{
+		saveCreate();
 		displayGame();
-		validSave = true;
 	}
 	// Otherwise show the main menu
 	else
