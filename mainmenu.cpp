@@ -8,7 +8,7 @@
 
 // The Strings used in the game-in-progress menu options
 const char mainMenuItems_0[] PROGMEM = "[     Main Menu     ]";
-const char mainMenuItems_1[] PROGMEM = "Continue";
+const char mainMenuItems_1[] PROGMEM = "Continue:";
 const char mainMenuItems_2[] PROGMEM = "New Game";
 const char mainMenuItems_3[] PROGMEM = "Records";
 const char mainMenuItems_4[] PROGMEM = "Options";
@@ -53,9 +53,15 @@ unsigned char displayMainMenu()
         
         // Repeat while a choice has not been made
 		while(choice != 255) {
-            
-            // Ask the user for a choice
+        
+			// Prompt the user for a choice
 			arduboy.clear();
+			
+			// Display room clear progress
+			arduboy.setCursor(6*11 + 2, 8);
+			arduboy.print(getCurrentLevelProgress());
+			arduboy.print(F(" Rms"));
+
 			choice = prompt_start(mainMenuItems, mainMenuItemsCount);
             
             // Choice One: Continue Game

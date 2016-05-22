@@ -203,6 +203,12 @@ void markRoomAsCleared(unsigned char room)
 	EEPROM.write(pos, data);
 }
 
+short getCurrentLevelProgress()
+{
+	int address = GAME_SAVE_FILE * 10 * 5;
+	return EEPROM.read(10+address+FILE_LEVEL);
+}
+
 void displayLoadGame(byte file)
 {
 	unsigned char level = currentLevel;
@@ -221,7 +227,7 @@ void displayLoadGame(byte file)
 		lo = EEPROM.read(10+address+FILE_HEALTH+1);
 		p1.health = (hi << 8) | lo;
 		
-		levelsCompleted = EEPROM.read(10+address+FILE_LEVEL);
+		levelsCompleted = getCurrentLevelProgress();
 		currentLevel = EEPROM.read(10+address+FILE_CURRENT_LEVEL);
 		
 		hi = EEPROM.read(10+address+FILE_TIME);
