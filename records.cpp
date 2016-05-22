@@ -67,8 +67,6 @@ void displayRecords()
 		delay(10);
 		updateInput();
 		if(B_PRESSED || A_PRESSED) {
-			if(A_PRESSED && LEFT_DOWN && RIGHT_DOWN) 
-				breakSave(GAME_SAVE_FILE);
 			arduboy.tunes.tone(TONE_BACK, 20);
 			break;
 		}

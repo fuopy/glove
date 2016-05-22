@@ -41,7 +41,6 @@ char prompt_start(const char* const* prompts, unsigned char promptCount)
 }
 void prompt_draw(const char* const* prompts, unsigned char promptCount, char choice)
 {
-	arduboy.clear();
 	arduboy.setTextSize(1);
 	arduboy.setCursor(0, 0);
 	arduboy.print(rps(&(prompts[0])));
@@ -51,6 +50,9 @@ void prompt_draw(const char* const* prompts, unsigned char promptCount, char cho
 		if(i == choice) {
 			arduboy.setCursor(0, 8*(i+1-startPos));
 			arduboy.print(">");
+		} else {
+			arduboy.setCursor(0, 8*(i+1-startPos));
+			arduboy.print(" ");
 		}
 		arduboy.setCursor(8, 8*(i+1-startPos));
 		arduboy.print(rps(&(prompts[i+1])));
@@ -62,6 +64,7 @@ const char okString[] PROGMEM = "Continue";
 void error(const char* message)
 {
 	const char* messages[] = {message, okString};
+	arduboy.clear();
 	prompt_start(messages, 1);
 }
 

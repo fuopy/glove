@@ -8,6 +8,12 @@
 void setup() {
 	// Start arduboy
     arduboy.begin();
+	
+	// Set audio state
+	if(!arduboy.audio.enabled())
+	{
+		arduboy.audio.off();
+	}
 
 	// Set framerate
     arduboy.setFrameRate(50);
@@ -31,6 +37,9 @@ void loop() {
 	// Otherwise show the main menu
 	else
 	{
-		displayMainMenu();
+		if(displayMainMenu() == GAME_REBOOT)
+		{
+			saveSetup();
+		}
 	}
 }

@@ -66,6 +66,9 @@ extern Arduboy arduboy;
 #define RIGHT_PRESSED (new_right && !old_right)
 #define RIGHT_RELEASED (!new_right && old_right)
 
+#define GAME_NOTHING 0
+#define GAME_REBOOT 1
+
 extern bool new_a, new_b, new_up, new_left, new_down, new_right;
 extern bool old_a, old_b, old_up, old_down, old_left, old_right;
 

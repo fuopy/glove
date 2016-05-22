@@ -3,6 +3,6 @@
 
 #include "game.h"
 
-void displayMainMenu();
+unsigned char displayMainMenu();
 
 #endif
