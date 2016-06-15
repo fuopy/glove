@@ -70,8 +70,9 @@ extern Arduboy arduboy;
 #define GAME_REBOOT 1
 
 #define GAME_SAVE_FILE 6 // Save file for use with the game
+#define GAME_RANDOM_FILE 7 // Save file for use with random
 #define GAME_GLOVE_OFFSET (GAME_SAVE_FILE * 10 * 5)
-#define GAME_RANDOM_OFFSET (GAME_SAVE_FILE * 10 * 6)
+#define GAME_RANDOM_OFFSET (GAME_RANDOM_FILE * 10 * 5)
 
 #define GAME_MODE_GLOVE 0
 #define GAME_MODE_RANDOM 1
